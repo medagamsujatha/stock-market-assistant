@@ -1,0 +1,9 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[1G[0K[2m5:12:33 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because lockfile has changed
+5:12:34 AM [express] serving on port 5000
+5:12:41 AM [express] GET /api/positions 304 in 21ms :: [{"id":1,"symbol":"RELIANCE","quantity":50,"averagePrice":"2850.5","type":"equity","createdAt":"2026-03-11T05:05:42.591Z"},{"id":2,"symbol":"HDFCBANK","quantity":100,"averagePrice":"1450.2","type":"equity","createdAt":"2026-03-11T05:05:42.595Z"},{"id":3,"symbol":"NIFTY24DEC22000CE","quantity":150,"averagePrice":"120.5","type":"option","createdAt":"2026-03-11T05:05:42.599Z"}]
+5:29:43 AM [express] GET /api/positions 304 in 10ms :: [{"id":1,"symbol":"RELIANCE","quantity":50,"averagePrice":"2850.5","type":"equity","createdAt":"2026-03-11T05:05:42.591Z"},{"id":2,"symbol":"HDFCBANK","quantity":100,"averagePrice":"1450.2","type":"equity","createdAt":"2026-03-11T05:05:42.595Z"},{"id":3,"symbol":"NIFTY24DEC22000CE","quantity":150,"averagePrice":"120.5","type":"option","createdAt":"2026-03-11T05:05:42.599Z"}]
+5:45:04 AM [express] GET /api/positions 304 in 9ms :: [{"id":1,"symbol":"RELIANCE","quantity":50,"averagePrice":"2850.5","type":"equity","createdAt":"2026-03-11T05:05:42.591Z"},{"id":2,"symbol":"HDFCBANK","quantity":100,"averagePrice":"1450.2","type":"equity","createdAt":"2026-03-11T05:05:42.595Z"},{"id":3,"symbol":"NIFTY24DEC22000CE","quantity":150,"averagePrice":"120.5","type":"option","createdAt":"2026-03-11T05:05:42.599Z"}]

@@ -1,0 +1,6 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[1G[0K5:05:57 AM [express] serving on port 5000
+5:06:03 AM [express] GET /api/positions 200 in 17ms :: [{"id":1,"symbol":"RELIANCE","quantity":50,"averagePrice":"2850.5","type":"equity","createdAt":"2026-03-11T05:05:42.591Z"},{"id":2,"symbol":"HDFCBANK","quantity":100,"averagePrice":"1450.2","type":"equity","createdAt":"2026-03-11T05:05:42.595Z"},{"id":3,"symbol":"NIFTY24DEC22000CE","quantity":150,"averagePrice":"120.5","type":"option","createdAt":"2026-03-11T05:05:42.599Z"}]
