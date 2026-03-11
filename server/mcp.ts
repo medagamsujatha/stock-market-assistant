@@ -3,6 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { z } from "zod";
 import { storage } from "./storage";
+import { getStockQuote, analyzeStock, getOptionsData } from "./stocks";
 
 export function setupMcpServer(app: Express) {
   const mcpServer = new McpServer({
@@ -40,69 +41,63 @@ export function setupMcpServer(app: Express) {
     }
   );
 
-  // Tool 2: Stock price / Quote (Mocked since we can't scrape and don't have paid APIs, but using free Yahoo Finance / mock data for Indian stocks)
+  // Tool 2: Stock price / Quote (Real-time data from Yahoo Finance)
   mcpServer.tool(
     "get_stock_quote",
-    "Get real-time (mocked) price and indicators (RSI, MACD) for an Indian stock (NSE/BSE).",
-    { symbol: z.string().describe("Stock symbol (e.g. RELIANCE, HDFCBANK)") },
+    "Get real-time price and technical indicators (RSI, MACD) for any stock symbol using Yahoo Finance.",
+    { symbol: z.string().describe("Stock symbol (e.g. RELIANCE.NS, HDFCBANK.NS for NSE, INFY for INFY)") },
     async ({ symbol }) => {
-      // Provide a realistic sounding mock response to fulfill the intelligence requirement without scraping
-      const basePrice = Math.floor(Math.random() * 3000) + 100;
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({
-              symbol: symbol.toUpperCase(),
-              price: basePrice,
-              change: (Math.random() * 10 - 5).toFixed(2) + "%",
-              RSI: (Math.random() * 40 + 30).toFixed(2), // 30 to 70
-              MACD: {
-                value: (Math.random() * 10 - 5).toFixed(2),
-                signal: (Math.random() * 10 - 5).toFixed(2),
-                histogram: (Math.random() * 2 - 1).toFixed(2)
-              },
-              status: Math.random() > 0.5 ? "Oversold" : (Math.random() > 0.5 ? "Overbought" : "Neutral"),
-              recommendation: "Hold"
-            }, null, 2),
-          },
-        ],
-      };
+      try {
+        const analysis = await analyzeStock(symbol);
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(analysis, null, 2),
+            },
+          ],
+        };
+      } catch (err) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" }),
+            },
+          ],
+          isError: true,
+        };
+      }
     }
   );
 
   // Tool 3: Options Greeks & Unusual Activity
   mcpServer.tool(
     "analyze_options",
-    "Calculate Greeks (Delta, Gamma, Theta, Vega) and detect unusual options activity for a stock/index.",
-    { symbol: z.string().describe("Underlying symbol (e.g. NIFTY, INFOSYS)") },
+    "Calculate Greeks (Delta, Gamma, Theta, Vega) and detect unusual options activity for a stock/index with real underlying prices.",
+    { symbol: z.string().describe("Underlying symbol (e.g. NIFTY, INFOSYS.NS)") },
     async ({ symbol }) => {
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({
-              symbol: symbol.toUpperCase(),
-              max_pain_strike: Math.floor(Math.random() * 500) * 50,
-              unusual_activity: Math.random() > 0.5,
-              notable_strikes: [
-                {
-                  strike: Math.floor(Math.random() * 500) * 50,
-                  type: "CE",
-                  implied_volatility: (Math.random() * 30 + 10).toFixed(2) + "%",
-                  greeks: {
-                    delta: (Math.random()).toFixed(2),
-                    gamma: (Math.random() * 0.1).toFixed(4),
-                    theta: -(Math.random() * 5).toFixed(2),
-                    vega: (Math.random() * 10).toFixed(2)
-                  },
-                  volume_spike: "300% over average"
-                }
-              ]
-            }, null, 2),
-          },
-        ],
-      };
+      try {
+        const optionsData = await getOptionsData(symbol);
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(optionsData, null, 2),
+            },
+          ],
+        };
+      } catch (err) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" }),
+            },
+          ],
+          isError: true,
+        };
+      }
     }
   );
 
